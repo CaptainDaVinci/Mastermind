@@ -40,9 +40,10 @@ int main()
         bool won = false;
         int score = 0;
         std::string code;
+        //keeps track of all the previous moves and feedback.
         std::vector<std::string> prevMoves;
 
-        std::cout << "New Game, Set ";
+        std::cout << "New Game\nSet code: ";
         readCode(code);
 
         for (int turn = 1; turn != maxTurns + 1; ++turn)
@@ -51,6 +52,7 @@ int main()
                       << maxTurns << "\n";
 
             std::string userCode;
+            std::cout << "Code: ";
             readCode(userCode);
             score++;
 
@@ -62,6 +64,7 @@ int main()
                 break;
             }
 
+            // Update previous moves and display them.
             prevMoves.push_back(userCode);
             showMoves(prevMoves);
         }
@@ -76,6 +79,8 @@ int main()
         if (score == maxTurns)
             score++;
 
+        // if current game is an even number then update
+        // player 1's score.
         if (game % 2 != 0)
         {
             p1score = score;
@@ -89,7 +94,7 @@ int main()
         }
     }
 
-    std::cout << "Player 1: " << p1score << '\n'
+    std::cout << "\n\nPlayer 1: " << p1score << '\n'
               << "Player 2: " << p2score << '\n';
     return 0;
 }
@@ -105,7 +110,6 @@ void readCode(std::string &code)
 {
     do
     {
-        std::cout << "Code: ";
         std::cin >> code;
     } while (code.size() != PEGS);
 
@@ -154,20 +158,29 @@ void printCode(std::string const &code)
 
 bool isMatching(const std::string &code, std::string &userCode)
 {
+    // keeps track of the duplicates, so that feedback
+    // is not provided twice for a single colour.
     std::vector<bool> seenCode(4, false);
     std::vector<bool> seenUserCode(seenCode);
-    std::string keyPegs;
+
+    std::string feedback;
     std::string::size_type i, j;
 
+    // for each character in the userCode, update the feedback
+    // with the character 'P' if they match both in colour
+    // and position with the code. 
     for (i = 0; i != PEGS; ++i)
     {
         if (code[i] == userCode[i])
         {
-            keyPegs += 'P';
+            feedback += 'P';
             seenCode[i] = seenUserCode[i] = true;
         }
     }
 
+    // for each character in the userCode, update the feedback
+    // with the character 'O' if they match in color but not in
+    // position.
     for (i = 0; i != PEGS; ++i)
     {
         if (!seenCode[i])
@@ -177,16 +190,18 @@ bool isMatching(const std::string &code, std::string &userCode)
                 if (!seenUserCode[j] && code[i] == userCode[j])
                 {
                     seenUserCode[j] = true;
-                    keyPegs += 'O';
+                    feedback += 'O';
                     break;
                 }
             }
         }
     }
 
-    userCode += keyPegs;
+    // concatenate the userCode with feedback.
+    userCode += feedback;
 
-    if (keyPegs != "PPPP")
+    // if the userCode did not match the code.
+    if (feedback != "PPPP")
         return false;
 
     return true;

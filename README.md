@@ -1,5 +1,5 @@
 # Mastermind
-A simple C++ implementation of the game Mastermind.
+A simple C++ implementation of the game _Mastermind_.
 
 ##Rules
 Rules of the game are simple. Two players are required,
@@ -16,7 +16,7 @@ Two players decide upon the number of games to be played
 and also the guesses they are allowed to take. Both of them
 should be even.
 
-### Colours used
+#### Colours used
 The allowed colours are: 
 - RED     : R
 - GREEN   : G
@@ -26,7 +26,7 @@ The allowed colours are:
 - CYAN    : C
 - BLANK   : -
 
-### Interface
+#### Interface
 After entering the number of games and the number of guesses
 allowed, the first player is to set the secret code which the 
 second player should not see.

@@ -32,7 +32,7 @@ allowed, the first player is to set the secret code which the
 second player should not see.
 
 The code to be set should have a combination of 4 colours out 
-of the allowed colours. The combination may containe repeated
+of the allowed colours. The combination may contain repeated
 colours or even blanks.
 
 ```
@@ -40,7 +40,7 @@ New game
 Set secret code: RBG- 
 ``` 
 The secret code set is red blue green blank.
-  Now, its upto the second player to crack the code with the fixed
+ Now, its upto the second player to crack the code with the fixed
 number of guesses.
 
 If the code entered is not the same as the secret code then the

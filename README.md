@@ -8,8 +8,8 @@ combination of 4 colours out of 6 possible colours. At
 each point where the code breaker guesses the incorrect
 code feedback is provided in the form of number of colours
 correct in both position an colour, or correct only in colour
-but not in position. For more details refer the followin article on
-[wikipedia]{https://en.wikipedia.org/wiki/Mastermind_(board_game)}. 
+but not in position. For more details refer the following article on
+[wikipedia](https://en.wikipedia.org/wiki/Mastermind_(board_game)). 
 
 ## How to play
 Two players decide upon the number of games to be played

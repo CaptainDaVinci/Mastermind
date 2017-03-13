@@ -31,16 +31,14 @@ int main()
     {
         bool won = false;
         unsigned int score = 0;
-
-        //keeps track of all the previous moves and feedback.
-        std::vector<std::string> prevMoves;
+        std::vector<std::string> prevMoves; //keeps track of all the previous moves and feedback.
 
         std::cout << "New Game\nSet secret code: ";
         std::string secretCode = getCode();
 
         for (unsigned int guess = 0; guess < maxGuess; ++guess)
         {
-            std::cout << "Remaining guesses: "
+            std::cout << "Guesses remaining: "
                       << maxGuess - guess << "\n";
 
             std::cout << "Code: ";
@@ -129,9 +127,8 @@ void setup(unsigned int &maxGames, unsigned int &maxGuess)
 
 void showMoves(const std::vector<std::string> &prevMoves)
 {
-    for (std::vector<std::string>::const_iterator i = prevMoves.begin();
-         i != prevMoves.end(); ++i)
-        printCode(*i);
+    for (const auto &i : prevMoves)
+        printCode(i);
 }
 
 std::string getCode(void)
@@ -174,6 +171,7 @@ std::string getCode(void)
                       << "Try again: ";
         }
     }
+
     system(CLEAR);
     return code;
 }
@@ -182,6 +180,7 @@ void printCode(const std::string &code)
 {
     std::size_t i = 0;
     std::cout << '\t';
+
     while (i != code.size())
     {
         switch (toupper(code[i++]))
@@ -224,8 +223,7 @@ bool isMatching(const std::string &secretCode, std::string &userCode)
     // is not provided twice for a single colour.
     std::vector<bool> seenSecretCode(4, false);
     std::vector<bool> seenUserCode(seenSecretCode);
-
-    std::string feedback;
+    std::string feedback("");
 
     // for each character in the userCode, update the feedback
     // with the character 'P' if they match both in colour

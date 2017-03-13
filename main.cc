@@ -1,48 +1,50 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <cctype>
 
-#define RED "\x1b[31;1m"
-#define GREEN "\x1b[32;1m"
-#define YELLOW "\x1b[33;1m"
-#define BLUE "\x1b[34;1m"
-#define MAGENTA "\x1b[35;1m"
-#define CYAN "\x1b[36;1m"
-#define WHITE "\x1b[37;1m"
-#define RESET "\x1b[0m"
-#define esc "\x13";
+constexpr auto RED     = "\x1b[31;1m";
+constexpr auto GREEN   = "\x1b[32;1m"; 
+constexpr auto YELLOW  = "\x1b[33;1m"; 
+constexpr auto BLUE    = "\x1b[34;1m"; 
+constexpr auto MAGENTA = "\x1b[35;1m"; 
+constexpr auto CYAN    = "\x1b[36;1m"; 
+constexpr auto WHITE   = "\x1b[37;1m"; 
+constexpr auto RESET   = "\x1b[0m";
+
+constexpr auto CLEAR = "clear";
+
 void printCode(const std::string &code);
 bool isMatching(const std::string &code, std::string &userCode);
-inline void showMoves(std::vector<std::string> &prevMoves);
-void readCode(std::string &code);
+void showMoves(const std::vector<std::string> &prevMoves);
+std::string getCode(void);
 void setup(unsigned int &maxGames, unsigned int &maxGuess);
 
-const unsigned int PEGS = 4;
+const unsigned int pegs = 4;
 
 int main()
 {
-    unsigned int maxGuess, maxGames, p1score(0), p2score(0);
+    unsigned int maxGuess(0), maxGames(0), p1score(0), p2score(0);
     setup(maxGames, maxGuess);
 
-    for (int game = 0; game != maxGames; ++game)
+    for (unsigned int game = 0; game < maxGames; ++game)
     {
         bool won = false;
-        int score = 0;
-        std::string secretCode;
+        unsigned int score = 0;
+
         //keeps track of all the previous moves and feedback.
         std::vector<std::string> prevMoves;
 
         std::cout << "New Game\nSet secret code: ";
-        readCode(secretCode);
+        std::string secretCode = getCode();
 
-        for (int guess = 0; guess != maxGuess; ++guess)
+        for (unsigned int guess = 0; guess < maxGuess; ++guess)
         {
-            std::cout << "Remaining guesses: " 
+            std::cout << "Remaining guesses: "
                       << maxGuess - guess << "\n";
 
-            std::string userCode;
             std::cout << "Code: ";
-            readCode(userCode);
+            std::string userCode = getCode();
 
             if (isMatching(secretCode, userCode))
             {
@@ -90,88 +92,99 @@ int main()
 
 void setup(unsigned int &maxGames, unsigned int &maxGuess)
 {
-    std::cout << "Max Games: ";
-    std::cin >> maxGames;
-    std::cout << "Max turns: ";
-    std::cin >> maxGuess;
 
-    try
+    while (true)
     {
-        if(maxGames % 2 != 0 || maxGuess % 2 != 0)
-            throw std::range_error("Invalid number!");
-        
-        if(maxGames > 12 || maxGuess > 12)
-            throw std::overflow_error("Number too high!");
-    }
+        std::cout << "Max Games: ";
+        std::cin >> maxGames;
+        std::cout << "Max turns: ";
+        std::cin >> maxGuess;
 
-    catch(std::range_error err)
-    {
-        std::cout << err.what()
-                  << "\nNumber should be even!\n"
-                  << "Try again\n\n";
-                  
-        setup(maxGames, maxGuess);
-    }
+        try
+        {
+            if (maxGames % 2 != 0 || maxGuess % 2 != 0)
+                throw std::range_error("Invalid number!");
 
-    catch(std::overflow_error err)
-    {
-        std::cout << err.what()
-                  << "\nNumber should be less than 13\n"
-                  << "Try again\n\n";
+            if (maxGames > 12 || maxGuess > 12)
+                throw std::overflow_error("Number too high!");
 
-        setup(maxGames, maxGuess);
+            break;
+        }
+
+        catch (std::range_error err)
+        {
+            std::cout << err.what()
+                      << "\nNumber should be even!\n"
+                      << "Try again\n\n";
+        }
+
+        catch (std::overflow_error err)
+        {
+            std::cout << err.what()
+                      << "\nNumber should be less than 13\n"
+                      << "Try again\n\n";
+        }
     }
 }
-inline void showMoves(std::vector<std::string> &prevMoves)
+
+void showMoves(const std::vector<std::string> &prevMoves)
 {
     for (std::vector<std::string>::const_iterator i = prevMoves.begin();
          i != prevMoves.end(); ++i)
         printCode(*i);
 }
 
-void readCode(std::string &code)
+std::string getCode(void)
 {
-    std::cin >> code;
-    try
+    std::string code;   
+    while (true)
     {
-        if(code.size() != PEGS)
-            throw std::length_error("Invalid number of characters!");
-        
-        for(std::string::size_type i = 0; i != PEGS; ++i)
-            if(code[i] != 'R' && code[i] != 'G' && code[i] != 'B' &&
-               code[i] != 'Y' &&code[i] != 'M' && code[i] != 'C' && code[i] != '-')
-               throw std::range_error("Invalid colours!");
-    }
+        std::cin >> code;
+        try
+        {
+            if (code.size() != pegs)
+                throw std::length_error("Invalid number of characters!");
 
-    catch(std::length_error err)
-    {
-        std::cout << "\n\n" << err.what() << '\n'
-                  << "Permitted characters " << PEGS
-                  << "\nTry again: ";
-        
-        readCode(code);
-    }
+            for (std::string::size_type i = 0; i != pegs; ++i)
+            {
+                code[i] = toupper(code[i]);\
 
-    catch(std::range_error err)
-    {
-        std::cout << "\n\n" << err.what() << '\n'
-                   << "Permitted colours: "
-                   << "R G B Y M C -\n"
-                   << "Try again: ";
-        
-        readCode(code);
+                if (code[i] != 'R' && code[i] != 'G' && code[i] != 'B' &&
+                    code[i] != 'Y' && code[i] != 'M' && code[i] != 'C' && code[i] != '-')
+                    throw std::range_error("Invalid colours!");
+            }
+
+            break;
+        }
+
+        catch (std::length_error err)
+        {
+            std::cout << "\n\n"
+                      << err.what() << '\n'
+                      << "Permitted characters " << pegs
+                      << "\nTry again: ";
+        }
+
+        catch (std::range_error err)
+        {
+            std::cout << "\n\n"
+                      << err.what() << '\n'
+                      << "Permitted colours: "
+                      << "R G B Y M C -\n"
+                      << "Try again: ";
+        }
     }
-    system("clear");
-    return ;
+    system(CLEAR);
+    return code;
 }
 
-void printCode(std::string const &code)
+void printCode(const std::string &code)
 {
-    std::string::size_type i = 0;
-
+    std::size_t i = 0;
+    std::cout << '\t';
     while (i != code.size())
     {
-        switch (code[i++])
+        switch (toupper(code[i++]))
         {
         case 'R':
             std::cout << RED << "# ";
@@ -209,32 +222,31 @@ bool isMatching(const std::string &secretCode, std::string &userCode)
 {
     // keeps track of the duplicates, so that feedback
     // is not provided twice for a single colour.
-    std::vector<bool> seenCode(4, false);
-    std::vector<bool> seenUserCode(seenCode);
+    std::vector<bool> seenSecretCode(4, false);
+    std::vector<bool> seenUserCode(seenSecretCode);
 
     std::string feedback;
-    std::string::size_type i, j;
 
     // for each character in the userCode, update the feedback
     // with the character 'P' if they match both in colour
-    // and position with the code. 
-    for (i = 0; i != PEGS; ++i)
+    // and position with the code.
+    for (std::size_t i = 0; i != pegs; ++i)
     {
         if (secretCode[i] == userCode[i])
         {
             feedback += 'P';
-            seenCode[i] = seenUserCode[i] = true;
+            seenSecretCode[i] = seenUserCode[i] = true;
         }
     }
 
     // for each character in the userCode, update the feedback
     // with the character 'O' if they match in color but not in
     // position.
-    for (i = 0; i != PEGS; ++i)
+    for (std::size_t i = 0; i != pegs; ++i)
     {
-        if (!seenCode[i])
+        if (!seenSecretCode[i])
         {
-            for (j = 0; j != PEGS; ++j)
+            for (std::size_t j = 0; j != pegs; ++j)
             {
                 if (!seenUserCode[j] && secretCode[i] == userCode[j])
                 {

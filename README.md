@@ -1,7 +1,7 @@
 # Mastermind
 A simple C++ implementation of the game _Mastermind_.
 
-##Rules
+## Rules
 Rules of the game are simple. Two players are required,
 one sets the code and the other breaks it. Code is a
 combination of 4 colours out of 6 possible colours. At

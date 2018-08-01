@@ -14,11 +14,11 @@ constexpr auto RESET   = "\x1b[0m";
 
 constexpr auto CLEAR = "clear";
 
-void printCode(const std::string &code);
-bool isMatching(const std::string &code, std::string &userCode);
-void showMoves(const std::vector<std::string> &prevMoves);
-std::string getCode(void);
+bool getFeedback(const std::string &code, std::string &userCode);
 void setup(unsigned int &maxGames, unsigned int &maxGuess);
+void showMoves(const std::vector<std::string> &prevMoves);
+void printCode(const std::string &code);
+std::string getCode(void);
 
 const unsigned int pegs = 4;
 
@@ -30,7 +30,6 @@ int main()
     for (unsigned int game = 0; game < maxGames; ++game)
     {
         bool won = false;
-        unsigned int score = 0;
         std::vector<std::string> prevMoves; //keeps track of all the previous moves and feedback.
 
         std::cout << "New Game\nSet secret code: ";
@@ -44,14 +43,13 @@ int main()
             std::cout << "Code: ";
             std::string userCode = getCode();
 
-            if (isMatching(secretCode, userCode))
+            if (getFeedback(secretCode, userCode))
             {
                 won = true;
                 std::cout << WHITE << "Code successfully broken!\n";
                 printCode(secretCode);
                 break;
             }
-            score++;
 
             // Update previous moves and display them.
             prevMoves.push_back(userCode);
@@ -64,27 +62,7 @@ int main()
                       << " to crack the code\n";
             printCode(secretCode);
         }
-
-        if (score == maxGuess + 1)
-            score++;
-
-        // if current game is an even number then update
-        // player 1's score.
-        if (game % 2 != 0)
-        {
-            p1score += score;
-            std::cout << "Player 1: " << p1score << "\n\n";
-        }
-
-        else
-        {
-            p2score += score;
-            std::cout << "Player 2: " << p2score << "\n\n";
-        }
     }
-
-    std::cout << "\n\nPlayer 1: " << p1score << '\n'
-              << "Player 2: " << p2score << '\n';
     return 0;
 }
 
@@ -156,7 +134,7 @@ std::string getCode(void)
 
         catch (std::length_error err)
         {
-            std::cout << "\n\n"
+            std::cout << "\n"
                       << err.what() << '\n'
                       << "Permitted characters " << pegs
                       << "\nTry again: ";
@@ -164,7 +142,7 @@ std::string getCode(void)
 
         catch (std::range_error err)
         {
-            std::cout << "\n\n"
+            std::cout << "\n"
                       << err.what() << '\n'
                       << "Permitted colours: "
                       << "R G B Y M C -\n"
@@ -217,13 +195,13 @@ void printCode(const std::string &code)
     std::cout << RESET << '\n';
 }
 
-bool isMatching(const std::string &secretCode, std::string &userCode)
+bool getFeedback(const std::string &secretCode, std::string &userCode)
 {
     // keeps track of the duplicates, so that feedback
     // is not provided twice for a single colour.
     std::vector<bool> seenSecretCode(4, false);
     std::vector<bool> seenUserCode(seenSecretCode);
-    std::string feedback("");
+    std::string feedback;
 
     // for each character in the userCode, update the feedback
     // with the character 'P' if they match both in colour

@@ -1,7 +1,7 @@
 # Mastermind
 A simple C++ implementation of the game _Mastermind_.
 
-##Rules
+## Rules
 Rules of the game are simple. Two players are required,
 one sets the code and the other breaks it. Code is a
 combination of 4 colours out of 6 possible colours. At
@@ -40,12 +40,12 @@ New game
 Set secret code: RBG- 
 ``` 
 The secret code set is red blue green blank.
- Now, its upto the second player to crack the code with the fixed
+ Now, its upto the second player to crack the code within the fixed
 number of guesses.
 
 If the code entered is not the same as the secret code then the
 code is checked for providing feedback. There are two types of 
-feed back:
+feedback:
 - 'P' denotes that one of the colours is correct in both colour and 
   position.
 
